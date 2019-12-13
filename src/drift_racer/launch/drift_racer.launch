@@ -10,7 +10,7 @@
 
 
   <!-- Joystick Teleop -->
-  <node name="joystick_teleop" pkg="agv" type="joystick_teleop" output="screen">
+  <node name="joystick_teleop" pkg="drift_racer" type="joystick_teleop" output="screen">
     <param name="joy_topic" value="/joy"/>
     <param name="nav_cmd_vel_topic" value="/cmd_vel_nav"/>
     <param name="final_cmd_vel_topic" value="/cmd_vel_final"/>
