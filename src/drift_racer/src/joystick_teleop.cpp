@@ -129,7 +129,7 @@ void JoystickTeleop::joystickCallback(const sensor_msgs::Joy::ConstPtr &joy_msg)
   else if (current_nav_mode_ == NavMode::Brake)
   {
     cmd_vel_manual_.linear.x = 0;
-    cmd_vel_manual_.angular.z = 0;
+    cmd_vel_manual_.angular.z = steering_axes * MAX_STEERING_ANGLE;
     cmd_vel_manual_.linear.z = 1;
     cmd_vel_pub_.publish(cmd_vel_manual_);
   }
