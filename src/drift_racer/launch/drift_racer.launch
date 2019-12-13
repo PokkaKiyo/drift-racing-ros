@@ -17,4 +17,7 @@
   </node>
 
 
+  <!-- Actuators Controller -->
+  <node name="actuators_controller" pkg="drift_racer" type="actuators_controller.py" output="screen"/>
+
 </launch>
