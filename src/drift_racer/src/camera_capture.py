@@ -8,6 +8,9 @@ https://wiki.ros.org/cv_bridge/Tutorials/ConvertingBetweenROSImagesAndOpenCVImag
 
 https://picamera.readthedocs.io/en/release-1.10/recipes1.html
 
+Note: if the camera and neural network stuff do not run well with ROS, we can run them seperately
+and then use a local socket to transport the steering angle to a publisher node
+
 '''
 
 import rospy
