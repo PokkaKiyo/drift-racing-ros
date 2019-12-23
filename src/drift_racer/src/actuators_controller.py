@@ -5,8 +5,6 @@
 This node is responsible for controlling the actuators of the vehicle.
 It receives a cmd_vel message of type geometry_msgs/Twist, and controls the actuators accordingly.
 
-
-
 Currently, the actuators in our system are:
 1. H-bridge for velocity control (open loop)
 2. Servo for steering control (open loop)
