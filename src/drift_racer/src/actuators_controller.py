@@ -25,7 +25,7 @@ class ActuatorsController:
     def __init__(self):
         self._cmd_vel_sub = rospy.Subscriber("/cmd_vel_final", Twist, self.cmd_vel_callback)
 
-        self._max_speed = 2.0
+        self._max_speed = 0.9
         self._max_steering = 0.8
 
         IO.setwarnings(False)
@@ -45,15 +45,18 @@ class ActuatorsController:
         if msg.linear.z != 0:
             desired_speed = 0
             print("Actuators: Braking!")
+            self._p.ChangeDutyCycle(0)
         else:
             desired_speed = msg.linear.x
-
-        print("Actuators: The desired speed is", desired_speed)
-        self._p.ChangeDutyCycle(desired_speed / self._max_speed * 50 + 50)
+            print("Actuators: The desired speed is", desired_speed)
+            if desired_speed == 0:
+                self._p.ChangeDutyCycle(0)
+            else:
+                self._p.ChangeDutyCycle(desired_speed / self._max_speed * 50 + 50)
 
         # Step 2: Control the steering
         desired_steering_angle = msg.angular.z
-        self._servo.angle = desired_steering_angle / self._max_steering * 180
+        self._servo.angle = desired_steering_angle / self._max_steering * -85
         print("Actuators: The desired steering angle is", desired_steering_angle)
     
 
