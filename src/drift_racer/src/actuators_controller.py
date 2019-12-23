@@ -5,12 +5,18 @@
 This node is responsible for controlling the actuators of the vehicle.
 It receives a cmd_vel message of type geometry_msgs/Twist, and controls the actuators accordingly.
 
+
+
 Currently, the actuators in our system are:
 1. H-bridge for velocity control (open loop)
 2. Servo for steering control (open loop)
 
 Callbacks:
-1. cmd_vel_callback
+1. cmd_vel_callback - Input: A message of type geometry_msgs/Twist, where:
+    - msg.linear.x is the desired speed of the vehicle, in the range [0.0, 0.9]
+    - msg.linear.z is 1 if the brakes are activated, 0 otherwise
+    - msg.angular.z is the desired steering angle of the vehicle
+    - All other fields should be 0
 
 '''
 
@@ -44,15 +50,15 @@ class ActuatorsController:
         # Step 1: Control the speed
         if msg.linear.z != 0:
             desired_speed = 0
-            print("Actuators: Braking!")
+            print("Actuators Controller: Braking!")
             self._p.ChangeDutyCycle(0)
         else:
             desired_speed = msg.linear.x
-            print("Actuators: The desired speed is", desired_speed)
+            print("Actuators Controller: The desired speed is", desired_speed)
             if desired_speed == 0:
                 self._p.ChangeDutyCycle(0)
             else:
-                self._p.ChangeDutyCycle(desired_speed / self._max_speed * 50 + 50)
+                self._p.ChangeDutyCycle(desired_speed / self._max_speed * 50 + 50) # range: [0.0, 100.0]
 
         # Step 2: Control the steering
         desired_steering_angle = msg.angular.z
@@ -62,6 +68,5 @@ class ActuatorsController:
 
 if __name__ == '__main__':
     rospy.init_node('actuators_controller')
-    rospy.logwarn("Actuators Controller: This code is untested, do not put on the car!")
     ActuatorsController()
     rospy.spin()
