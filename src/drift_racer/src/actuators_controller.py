@@ -43,8 +43,6 @@ class ActuatorsController:
 
 
     def cmd_vel_callback(self, msg):
-        # TODO: add a limiter to the speed and steering
-
         # Step 1: Control the speed
         if msg.linear.z != 0:
             desired_speed = 0
