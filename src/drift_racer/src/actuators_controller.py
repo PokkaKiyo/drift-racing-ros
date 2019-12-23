@@ -45,7 +45,6 @@ class ActuatorsController:
     def cmd_vel_callback(self, msg):
         # Step 1: Control the speed
         if msg.linear.z != 0:
-            desired_speed = 0
             print("Actuators Controller: Braking!")
             self._p.ChangeDutyCycle(0)
         else:
