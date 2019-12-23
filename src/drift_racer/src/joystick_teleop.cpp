@@ -4,7 +4,7 @@
  * 2. Arbitrate between sending manual and autonomous commands to the actuators
  * 
  * Output: A message of type geometry_msgs/Twist, where
- * msg.linear.x is the desired speed of the vehicle
+ * msg.linear.x is the desired speed of the vehicle, in the range [0.0, 0.9]
  * msg.linear.z is 1 if the brakes are activated, 0 otherwise
  * msg.angular.z is the desired steering angle of the vehicle
  * All other fields should be 0
@@ -43,7 +43,6 @@ private:
   geometry_msgs::Twist cmd_vel_manual_;
   geometry_msgs::Twist cmd_vel_autonomous_;
 
-  double MAX_SPEED = 1.0;
   double MAX_STEERING_ANGLE = 0.8;
 
   void joystickCallback(const sensor_msgs::Joy::ConstPtr &joy_msg);
@@ -119,7 +118,7 @@ void JoystickTeleop::joystickCallback(const sensor_msgs::Joy::ConstPtr &joy_msg)
     }
     else
     {
-      cmd_vel_manual_.linear.x = (forward_axes - 0.1) * MAX_SPEED;
+      cmd_vel_manual_.linear.x = forward_axes - 0.1;
     }
 
     cmd_vel_manual_.angular.z = steering_axes * MAX_STEERING_ANGLE;
