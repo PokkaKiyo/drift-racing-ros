@@ -57,7 +57,7 @@ class ActuatorsController:
 
         # Step 2: Control the steering
         desired_steering_angle = msg.angular.z
-        self._servo.angle = desired_steering_angle / self._max_steering * -85
+        self._servo.angle = desired_steering_angle / self._max_steering * -80.0 # TODO: fix this line
         print("Actuators: The desired steering angle is", desired_steering_angle)
     
 
