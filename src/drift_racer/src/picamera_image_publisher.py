@@ -38,4 +38,3 @@ if __name__ == '__main__':
     rospy.init_node('picamera_image_publisher')
     PiCameraImagePublisher()
     rospy.spin()    
-
