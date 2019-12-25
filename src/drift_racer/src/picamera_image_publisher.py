@@ -17,7 +17,7 @@ class PiCameraImagePublisher:
     def __init__(self):
         self._image_pub = rospy.Publisher('/cam_image', Image, queue_size=1)
 
-        self._camera_timer = rospy.Timer(rospy.Duration(0.2), camera_timer_callback)
+        self._camera_timer = rospy.Timer(rospy.Duration(0.2), camera_timer_callback) # 0.2s period == 5hz
 
         self._camera  = picamera.camera.PiCamera()
         self._camera.resolution = (320, 240)
