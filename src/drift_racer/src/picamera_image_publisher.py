@@ -9,6 +9,8 @@ This node is responsible for capturing images using the camera on the vehicle, a
 import rospy
 from sensor_msgs.msg import Image
 
+import numpy as np
+
 import picamera
 
 class PiCameraImagePublisher:
