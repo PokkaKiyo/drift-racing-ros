@@ -22,10 +22,10 @@ class PiCameraImagePublisher:
     
     def camera_timer_callback(self, event):
         print("camera_timer_callback_called")
-        
+
         msg = Image()
         msg.data = np.empty((240 * 320 * 3,), dtype=np.uint8)
-        self._camera.capture(msg.data, 'bgr')
+        self._camera.capture(msg.data)
         msg.data = msg.data.reshape((240, 320, 3))
 
         self._image_pub.publish(msg)
