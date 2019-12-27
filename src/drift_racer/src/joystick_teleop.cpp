@@ -44,7 +44,7 @@ private:
   geometry_msgs::Twist cmd_vel_autonomous_;
 
   double MAX_SPEED = 1.0;
-  double MAX_STEERING_ANGLE = 0.8;
+  double MAX_STEERING_ANGLE = 1.0;
 
   void joystickCallback(const sensor_msgs::Joy::ConstPtr &joy_msg);
   void navCmdVelCallback(const geometry_msgs::Twist::ConstPtr &nav_cmd_vel_msg);
