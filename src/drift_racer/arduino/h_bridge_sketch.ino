@@ -23,7 +23,7 @@ void cmdVelCallback(const geometry_msgs::Twist& cmd_vel_msg)
     int pwm_value = desired_throttle * 255.0;
     analogWrite(PWM_PIN, pwm_value);
   }
-  last_cmd_time = millis()
+  last_cmd_time = millis();
 }
 
 ros::Subscriber<geometry_msgs::Twist> sub("cmd_vel_final", &cmdVelCallback);
