@@ -53,7 +53,7 @@ class DriveAgent:
 
                     data = []
                     data.append(output_data)
-                    data_string = pickle.dumps(data)
+                    data_string = pickle.dumps(data, protocol=1)
                     self._socket.send(data_string)
                     
             except KeyboardInterrupt:
@@ -64,3 +64,4 @@ class DriveAgent:
 
 if __name__ == "__main__":
     DriveAgent()
+
