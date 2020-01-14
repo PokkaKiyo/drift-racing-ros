@@ -61,7 +61,17 @@ class GazeboEnv(gym.Env):
         pass
 
     def reset_episode(self):
-        pass
+        rospy.wait_for_service('/gazebo/set_model_state')
+        try:
+            reset_pose = rospy.ServiceProxy('/gazebo/set_model_state', SetModelState)
+            model_state = ModelState()
+            model_state.model_name = "drift_car"
+            model_state.pose.position.x = 0
+            model_state.pose.position.y = 0
+            model_state.pose.position.z = 0
+            reset_pose(model_state)
+        except (rospy.ServiceException) as e:
+            print("/gazebo/set_model_state service call failed")
 
     def pause_physics(self):
         rospy.wait_for_service('/gazebo/pause_physics')
