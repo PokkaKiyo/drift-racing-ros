@@ -40,7 +40,9 @@ class GazeboEnv(gym.Env):
 
 
     def get_state(self):
-        pass
+        model_states = self.get_model_states()
+        state = self.get_car_state(model_states)
+        return state
 
     def get_reward(self):
         drift_metric_score = self.get_drift_metric_score()
@@ -110,7 +112,7 @@ class GazeboEnv(gym.Env):
         car_state.append(car_position.y)
 
         # do transform to base link frame, then add the other 3 state components
-        
+
         return car_state
 
     def pause_physics(self):
