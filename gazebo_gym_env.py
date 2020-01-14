@@ -52,13 +52,13 @@ class GazeboEnv(gym.Env):
         return reward
     
     def get_isdone(self):
-        pass
+        return False # stub
     
     def get_drift_metric_score(self):
-        pass
+        return 0 # stub
     
     def get_path_tracking_score(self):
-        pass
+        return 0 # stub
 
     def reset_episode(self):
         rospy.wait_for_service('/gazebo/set_model_state')
@@ -72,6 +72,46 @@ class GazeboEnv(gym.Env):
             reset_pose(model_state)
         except (rospy.ServiceException) as e:
             print("/gazebo/set_model_state service call failed")
+        
+        model_states = self.get_model_states()
+        state = self.get_car_state(model_states)
+        return state
+    
+    def get_model_states(self):
+        num_tries = 0
+        model_states = None
+        while model_states is None:
+            try:
+                num_tries += 1
+                model_states = rospy.wait_for_message('/gazebo/model_states', ModelStates, timeout=1)
+            except Exception as e:
+                pass
+        
+        if num_tries > 1:
+            print("get_model_state num_tries:", num_tries)
+        
+        return model_states
+
+    def get_car_state(self, model_states):
+        '''
+        The car state consists of:
+        1. x coordinate (world)
+        2. y coordinate (world)
+        3. velocity x-axis (baselink)
+        4. velocity y-axis (baselink)
+        5. yaw (baselink)
+        '''
+        car_state = []
+
+        car_pose = model_states.pose[0]
+        car_position = car_pose.position
+
+        car_state.append(car_position.x)
+        car_state.append(car_position.y)
+
+        # do transform to base link frame, then add the other 3 state components
+        
+        return car_state
 
     def pause_physics(self):
         rospy.wait_for_service('/gazebo/pause_physics')
