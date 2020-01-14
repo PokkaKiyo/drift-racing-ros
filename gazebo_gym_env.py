@@ -21,6 +21,7 @@ class GazeboEnv(gym.Env):
         self.unpause = rospy.ServiceProxy('/gazebo/unpause_physics', Empty)
         self.pause = rospy.ServiceProxy('/gazebo/pause_physics', Empty)
 
+        self.pause_physics()
 
     def drive_car(self, throttle, steering):
         pass
@@ -49,6 +50,9 @@ class GazeboEnv(gym.Env):
         reward = (alpha * drift_metric_score) + ((1.0 - alpha) * path_tracking_score)
 
         return reward
+    
+    def get_isdone(self):
+        pass
     
     def get_drift_metric_score(self):
         pass
@@ -88,3 +92,8 @@ class GazeboEnv(gym.Env):
 
         if (gzclient_count or gzserver_count or roslaunch_count):
             os.wait()
+
+if __name__ == "__main__":
+    env = GazeboEnv()
+    env.reset_episode()
+
