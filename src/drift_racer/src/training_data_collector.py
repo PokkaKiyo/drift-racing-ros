@@ -17,7 +17,7 @@ class TrainingDataCollector:
         self._steering_angle = 0
         self._speed = 0
 
-        with open('data_log.csv', 'w+') as file:
+        with open('/home/pi/catkin_ws/data_log.csv', 'w+') as file:
             writer = csv.writer(file)
             writer.writerow(['image_path', 'steering_angle', 'speed'])
 
@@ -30,7 +30,7 @@ class TrainingDataCollector:
     def image_count_callback(self, msg):
         image_path = "data/" + msg.data + ".jpeg"
 
-        with open('data_log.csv', 'a+') as file:
+        with open('/home/pi/catkin_ws/data_log.csv', 'a+') as file:
             writer = csv.writer(file)
             writer.writerow([image_path, self._steering_angle, self._speed])
 

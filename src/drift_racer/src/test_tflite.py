@@ -6,10 +6,7 @@ import time
 from PIL import Image
 from tflite_runtime.interpreter import Interpreter
 
-import socket
-import pickle
-
-class DriveAgent:
+class BehaviouralCloningAgent:
     def __init__(self):
         self._interpreter = Interpreter("./converted_model.tflite")
         self._interpreter.allocate_tensors()
@@ -20,17 +17,15 @@ class DriveAgent:
         print(self._input_height)
         print(self._input_width)
 
-        self._socket = socket.socket()
-        socket_addr = ('127.0.0.1', 8888)
-        self._socket.connect(socket_addr)
+        self._socket = None # TODO
 
         self.main()
 
     def main(self):
         input_details = self._interpreter.get_input_details()
         output_details = self._interpreter.get_output_details()
-        with picamera.PiCamera(resiolution=(640, 480), framerate=30) as camera:
-            camera.vflip = True
+        with picamera.PiCamera(resolution=(1296, 730), framerate=30) as camera:
+            # camera.vflip = True
             camera.start_preview()
             try:
                 stream = io.BytesIO()
@@ -51,18 +46,11 @@ class DriveAgent:
                     stream.seek(0)
                     stream.truncate()
                     camera.annotate_text = str(output_data) + ", " + str(time_taken_ms)
-
-                    data = []
-                    data.append(output_data)
-                    data_string = pickle.dumps(data, protocol=1)
-                    self._socket.send(data_string)
-                    
             except KeyboardInterrupt:
-                print("DriveAgent: Ctrl-C")
+                print("BehaviouralCloningAgent: Ctrl-C")
             finally:
                 camera.stop_preview()
-                print("DriveAgent: done")
+                print("BehaviouralCloningAgent: done")
 
 if __name__ == "__main__":
-    DriveAgent()
-
+    BehaviouralCloningAgent()
