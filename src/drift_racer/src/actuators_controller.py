@@ -25,17 +25,18 @@ class ActuatorsController:
 
         # Step 1: Control the speed
         if msg.linear.z != 0:
-            desired_speed = 0
+            duty_cycle = 0
             print("Actuators: Braking!")
         else:
             desired_speed = msg.linear.x
-            print("Actuators: The desired speed is", desired_speed)
+            # duty_cycle = desired_speed / self._max_speed * 40
             if desired_speed == 0:
                 duty_cycle = 0
             else:
-                duty_cycle = (desired_speed + 0.1) / self._max_speed * 50 + 50
+                duty_cycle = 50
 
-            print(duty_cycle)
+        print("Actuators: duty_cycle:", duty_cycle)
+        if duty_cycle >= 0:
             self._p.ChangeDutyCycle(duty_cycle)
 
         # Step 2: Control the steering
