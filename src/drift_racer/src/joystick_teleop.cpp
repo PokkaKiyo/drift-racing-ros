@@ -113,15 +113,7 @@ void JoystickTeleop::joystickCallback(const sensor_msgs::Joy::ConstPtr &joy_msg)
   // Step 3: perform manual controls as necessary
   if (current_nav_mode_ == NavMode::Manual)
   {
-    if (forward_axes < 0.1)
-    {
-      cmd_vel_manual_.linear.x = 0;
-    }
-    else
-    {
-      cmd_vel_manual_.linear.x = (forward_axes - 0.1) * MAX_SPEED;
-    }
-
+    cmd_vel_manual_.linear.x = forward_axes * MAX_SPEED;
     cmd_vel_manual_.angular.z = steering_axes * MAX_STEERING_ANGLE;
     cmd_vel_manual_.linear.z = 0;
     cmd_vel_pub_.publish(cmd_vel_manual_);
