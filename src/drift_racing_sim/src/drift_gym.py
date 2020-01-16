@@ -41,7 +41,7 @@ class GazeboEnv(gym.Env):
     def step(self, action):
         self.unpause_physics()
 
-        self.drive_car(action[0], action[1])
+        self.drive_car(action)
 
         state = self.get_state()
         reward = self.get_reward()
