@@ -25,6 +25,9 @@ class GazeboEnv(gym.Env):
         self.ackermann_cmd_msg = AckermannDrive()
         self.ackermann_cmd_msg.speed = 1.0
 
+        self.path_coordinates = get_figure_eight_coordinates()
+        self.waypoint_idx = 0
+
         self.pause_physics()
 
     def drive_car(self, action):
