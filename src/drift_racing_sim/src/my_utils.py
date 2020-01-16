@@ -32,12 +32,12 @@ def get_figure_eight_coordinates():
         y2 = calculate_y2(i)
         y.append(-1 * math.sqrt(y2))
     
-    x.append(0)
-    y.append(0)
+    # x.append(0)
+    # y.append(0)
 
-    plt.plot(x, y)
-    plt.show()
-    exit()
+    # plt.plot(x, y)
+    # plt.show()
+    # exit()
 
     if len(x) != len(y):
         return None
