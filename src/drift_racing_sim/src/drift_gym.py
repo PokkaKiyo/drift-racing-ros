@@ -71,7 +71,10 @@ class GazeboEnv(gym.Env):
         return reward
     
     def get_isdone(self):
-        return False # stub
+        if self.dist_to_waypoint > 5.0:
+            print("Done:", self.dist_to_waypoint)
+            return True
+        return False
     
     # For now, using the one from https://github.com/kanakkabara/Autonomous-Drifting
     def get_drift_metric_score(self, state):
@@ -95,6 +98,7 @@ class GazeboEnv(gym.Env):
         current_y = state[1]
         waypoint_x, waypoint_y = self.path_coordinates[self.waypoint_idx]
         dist_to_waypoint = calculateL2Dist(current_x, waypoint_x, current_y, waypoint_y)
+        self.dist_to_waypoint = dist_to_waypoint
     
         if (np.abs(current_x - waypoint_x) + np.abs(current_y - waypoint_y)) < 1e-3:
             self.waypoint_idx = (self.waypoint_idx + 1) % len(self.path_coordinates)
