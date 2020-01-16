@@ -65,7 +65,7 @@ class GazeboEnv(gym.Env):
         path_tracking_score = self.get_path_tracking_score(state)
 
         alpha = 0.5
-        reward = (alpha * drift_metric_score) + ((1.0 - alpha) * path_tracking_score)
+        reward = (alpha * drift_metric_score) + ((1.0 - alpha) * path_tracking_score) - 1
 
         return reward
     
