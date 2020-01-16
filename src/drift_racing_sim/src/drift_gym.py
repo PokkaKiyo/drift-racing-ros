@@ -74,8 +74,8 @@ class GazeboEnv(gym.Env):
     def get_path_tracking_score(self):
         return 0 # stub
 
-    def reset_episode(self):
-        print('reseting episode')
+    def reset_env(self):
+        print('resetting env')
         rospy.wait_for_service('/gazebo/set_model_state')
         try:
             reset_pose = rospy.ServiceProxy('/gazebo/set_model_state', SetModelState)
