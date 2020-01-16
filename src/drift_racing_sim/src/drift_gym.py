@@ -21,22 +21,20 @@ class GazeboEnv(gym.Env):
         self.unpause = rospy.ServiceProxy('/gazebo/unpause_physics', Empty)
         self.pause = rospy.ServiceProxy('/gazebo/pause_physics', Empty)
 
-        self.desired_car_speed = 1.0
+        self.ackermann_cmd_msg = AckermannDrive()
+        self.ackermann_cmd_msg.speed = 1.0
 
         self.pause_physics()
 
     def drive_car(self, action):
-        msg = AckermannDrive()
-        msg.speed = self.desired_car_speed
-
         if action == 1:
-            msg.steering_angle = 0.8
+            self.ackermann_cmd_msg.steering_angle = 0.8
         elif action == 2:
-            msg.steering_angle = -0.8
+            self.ackermann_cmd_msg.steering_angle = -0.8
         else:
-            msg.steering_angle = 0
+            self.ackermann_cmd_msg.steering_angle = 0
 
-        self._cmd_vel_pub.publish(msg)
+        self._cmd_vel_pub.publish(self.ackermann_cmd_msg)
 
     def step(self, action):
         self.unpause_physics()
