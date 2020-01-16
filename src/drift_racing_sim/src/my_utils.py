@@ -48,3 +48,8 @@ def get_figure_eight_coordinates():
         coordinates.append((x[i], y[i]))
     print(coordinates)
     return coordinates
+
+def calculateL2Dist(x1, x2, y1, y2):
+    x = x1 - x2
+    y = y1 - y2
+    return math.sqrt(x**2 + y**2)
