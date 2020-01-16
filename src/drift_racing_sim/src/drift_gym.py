@@ -74,25 +74,6 @@ class GazeboEnv(gym.Env):
     def get_path_tracking_score(self):
         return 0 # stub
 
-    def reset_env(self):
-        print('resetting env')
-        rospy.wait_for_service('/gazebo/set_model_state')
-        try:
-            reset_pose = rospy.ServiceProxy('/gazebo/set_model_state', SetModelState)
-            model_state = ModelState()
-            model_state.model_name = "ackermann_vehicle"
-            model_state.pose.position.x = 0
-            model_state.pose.position.y = 0
-            model_state.pose.position.z = 0
-            reset_pose(model_state)
-        except (rospy.ServiceException) as e:
-            print("/gazebo/set_model_state service call failed")
-        
-        model_states = self.get_model_states()
-        state = self.get_car_state(model_states)
-        print('done')
-        return state
-    
     def get_model_states(self):
         num_tries = 0
         model_states = None
@@ -128,6 +109,25 @@ class GazeboEnv(gym.Env):
         # do transform to base link frame, then add the other 3 state components
 
         return car_state
+
+    def reset_env(self):
+        print('resetting env')
+        rospy.wait_for_service('/gazebo/set_model_state')
+        try:
+            reset_pose = rospy.ServiceProxy('/gazebo/set_model_state', SetModelState)
+            model_state = ModelState()
+            model_state.model_name = "ackermann_vehicle"
+            model_state.pose.position.x = 0
+            model_state.pose.position.y = 0
+            model_state.pose.position.z = 0
+            reset_pose(model_state)
+        except (rospy.ServiceException) as e:
+            print("/gazebo/set_model_state service call failed")
+        
+        model_states = self.get_model_states()
+        state = self.get_car_state(model_states)
+        print('done')
+        return state
 
     def pause_physics(self):
         rospy.wait_for_service('/gazebo/pause_physics')
