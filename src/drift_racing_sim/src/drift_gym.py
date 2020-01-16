@@ -11,6 +11,7 @@ import numpy as np
 import subprocess
 import time
 import os
+import math
 
 from my_utils import get_figure_eight_coordinates, calculateL2Dist
 
@@ -72,9 +73,23 @@ class GazeboEnv(gym.Env):
     def get_isdone(self):
         return False # stub
     
-    def get_drift_metric_score(self):
-        return 0 # stub
-    
+    # For now, using the one from https://github.com/kanakkabara/Autonomous-Drifting
+    def get_drift_metric_score(self, state):
+		desiredForwardVel = 0.5		
+		desiredSideVel = 2  
+        desiredAngularVel = -3.5
+
+		carForwardVel = state[3]
+		carSideVel = state[4]
+        carAngularVel = state[5]
+
+        sigma = 5
+        deviationMagnitude = (carSideVel - desiredSideVel)**2 + \
+                        (carForwardVel - desiredForwardVel)**2 + \
+                        (carAngularVel - desiredAngularVel)**2
+        
+        return 1 - math.exp(-deviationMagnitude/(2 * sigma**2))
+
     def get_path_tracking_score(self):
         current_x = state[0]
         current_y = state[1]
