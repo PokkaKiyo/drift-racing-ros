@@ -6,12 +6,13 @@ from gazebo_msgs.msg import ModelStates, ModelState
 from gazebo_msgs.srv import SetModelState
 from std_srvs.srv import Empty
 
+import gym
 import numpy as np
 import subprocess
 import time
 import os
 
-import gym
+from my_utils import get_figure_eight_coordinates
 
 class GazeboEnv(gym.Env):
     def __init__(self):
@@ -158,4 +159,3 @@ class GazeboEnv(gym.Env):
 
         if (gzclient_count or gzserver_count or roslaunch_count):
             os.wait()
-
