@@ -12,7 +12,7 @@ import subprocess
 import time
 import os
 
-from my_utils import get_figure_eight_coordinates
+from my_utils import get_figure_eight_coordinates, calculateL2Dist
 
 class GazeboEnv(gym.Env):
     def __init__(self):
@@ -46,7 +46,7 @@ class GazeboEnv(gym.Env):
         self.drive_car(action)
 
         state = self.get_state()
-        reward = self.get_reward()
+        reward = self.get_reward(state)
         done = self.get_isdone()
         info = None
 
@@ -60,9 +60,9 @@ class GazeboEnv(gym.Env):
         state = self.get_car_state(model_states)
         return state
 
-    def get_reward(self):
-        drift_metric_score = self.get_drift_metric_score()
-        path_tracking_score = self.get_path_tracking_score()
+    def get_reward(self, state):
+        drift_metric_score = self.get_drift_metric_score(state)
+        path_tracking_score = self.get_path_tracking_score(state)
 
         alpha = 0.5
         reward = (alpha * drift_metric_score) + ((1.0 - alpha) * path_tracking_score)
@@ -76,7 +76,15 @@ class GazeboEnv(gym.Env):
         return 0 # stub
     
     def get_path_tracking_score(self):
-        return 0 # stub
+        current_x = state[0]
+        current_y = state[1]
+        waypoint_x, waypoint_y = self.path_coordinates[self.waypoint_idx]
+        dist_to_waypoint = calculateL2Dist(current_x, waypoint_x, current_y, waypoint_y)
+    
+        if (np.abs(current_x - waypoint_x) + np.abs(current_y - waypoint_y)) < 1e-3:
+            self.waypoint_idx = (self.waypoint_idx + 1) % len(self.path_coordinates)
+        
+        return -1 * dist_to_waypoint
 
     def get_model_states(self):
         num_tries = 0
