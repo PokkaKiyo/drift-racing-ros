@@ -42,14 +42,14 @@ class GazeboEnv(gym.Env):
         self.unpause_physics()
 
         self.drive_car(action[0], action[1])
-        
+
         state = self.get_state()
         reward = self.get_reward()
         done = self.get_isdone()
+        info = None
 
         self.pause_physics()
 
-        info = None
         return state, reward, done, info
 
 
