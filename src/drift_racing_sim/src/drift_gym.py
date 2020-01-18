@@ -28,7 +28,7 @@ class GazeboEnv(gym.Env):
         self.ackermann_cmd_msg.speed = 1.0
 
         self.path_coordinates = get_figure_eight_coordinates()
-        self.waypoint_idx = 0
+        self.waypoint_idx = 1
 
         self.pause_physics()
 
