@@ -73,8 +73,8 @@ class GazeboEnv(gym.Env):
         return reward
     
     def get_isdone(self):
-        if self.dist_to_waypoint > 5.0:
-            print("Done:", self.dist_to_waypoint)
+        if self.dist_to_waypoint > 7.0:
+            print("Done:", self.waypoint_idx)
             return True
         return False
     
