@@ -46,18 +46,18 @@ class GazeboEnv(gym.Env):
         self.unpause_physics()
 
         self.drive_car(action)
+        model_states = self.get_model_states()
 
-        state = self.get_state()
+        self.pause_physics()
+
+        state = self.get_state(model_states)
         reward = self.get_reward(state)
         done = self.get_isdone()
         info = None
 
-        self.pause_physics()
-
         return state, reward, done, info
 
-    def get_state(self):
-        model_states = self.get_model_states()
+    def get_state(self, model_states):
         state = self.get_car_state(model_states)
         return state
 
@@ -67,6 +67,8 @@ class GazeboEnv(gym.Env):
 
         alpha = 0.5
         reward = (alpha * drift_metric_score) + ((1.0 - alpha) * path_tracking_score) - 1
+
+        print("drift_score: " + str(drift_metric_score) + ", tracking_score: " + str(path_tracking_score))
 
         return reward
     
