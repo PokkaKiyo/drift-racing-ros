@@ -57,10 +57,6 @@ class GazeboEnv(gym.Env):
 
         return state, reward, done, info
 
-    def get_state(self, model_states):
-        state = self.get_car_state(model_states)
-        return state
-
     def get_reward(self, state):
         drift_metric_score = self.get_drift_metric_score(state)
         path_tracking_score = self.get_path_tracking_score(state)
@@ -119,7 +115,7 @@ class GazeboEnv(gym.Env):
         
         return model_states
 
-    def get_car_state(self, model_states):
+    def get_state(self, model_states):
         '''
         The car state consists of:
         1. x coordinate (world)
@@ -180,7 +176,7 @@ class GazeboEnv(gym.Env):
         model_states = self.get_model_states()
         seld.pause_physics()
         
-        state = self.get_car_state(model_states)
+        state = self.get_state(model_states)
         print('...done')
         return state
 
