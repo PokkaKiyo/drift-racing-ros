@@ -95,7 +95,7 @@ class GazeboEnv(gym.Env):
         
         return 1 - math.exp(-deviationMagnitude/(2 * sigma**2))
 
-    def get_path_tracking_score(self):
+    def get_path_tracking_score(self, state):
         current_x = state[0]
         current_y = state[1]
         waypoint_x, waypoint_y = self.path_coordinates[self.waypoint_idx]
