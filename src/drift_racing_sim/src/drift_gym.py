@@ -178,8 +178,11 @@ class GazeboEnv(gym.Env):
             reset_pose(model_state)
         except (rospy.ServiceException) as e:
             print("/gazebo/set_model_state service call failed")
-        
+
+        self.unpause_physics()
         model_states = self.get_model_states()
+        seld.pause_physics()
+        
         state = self.get_car_state(model_states)
         print('...done')
         return state
