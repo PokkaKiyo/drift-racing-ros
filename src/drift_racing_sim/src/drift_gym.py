@@ -56,7 +56,6 @@ class GazeboEnv(gym.Env):
 
         return state, reward, done, info
 
-
     def get_state(self):
         model_states = self.get_model_states()
         state = self.get_car_state(model_states)
