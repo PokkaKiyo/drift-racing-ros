@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import rospy
+import tf
 from ackermann_msgs.msg import AckermannDrive
 from gazebo_msgs.msg import ModelStates, ModelState
 from gazebo_msgs.srv import SetModelState
@@ -129,20 +130,42 @@ class GazeboEnv(gym.Env):
         4. velocity y-axis (baselink)
         5. yaw (baselink)
         '''
+        car_position = model_states.pose[1].position
+        car_orientation = model_states.pose[1].orientation
+
+        t = tf.TransformerROS(True, rospy.Duration(10.0))
+        m = TransformStamped()
+        m.header.frame_id = 'world'
+        m.child_frame_id = 'base_link'
+        m.transform.translation.x = car_position.x
+        m.transform.translation.y = car_position.y
+        m.transform.translation.z = car_position.z
+        m.transform.rotation.x = car_orientation.x
+        m.transform.rotation.y = car_orientation.y
+        m.transform.rotation.z = car_orientation.z
+        m.transform.rotation.w = car_orientation.w
+        t.setTransform(m)
+
+        vel_vector = Vector3Stamped()
+        vel_vector.vector.x = model_states.twist[1].linear.x
+        vel_vector.vector.y = model_states.twist[1].linear.y
+        vel_vector.vector.z = model_states.twist[1].linear.z
+        vel_vector.header.frame_id = "world"
+        vel_vector_baselink = t.transformVector3("base_link", vel_vector)
+
+        car_yaw = model_states.twist[1].angular.z
+
         car_state = []
-
-        car_pose = model_states.pose[0]
-        car_position = car_pose.position
-
         car_state.append(car_position.x)
         car_state.append(car_position.y)
-
-        # do transform to base link frame, then add the other 3 state components
+        car_state.append(vel_vector_baselink.vector.x)
+        car_state.append(vel_vector_baselink.vector.y)
+        car_state.append(car_yaw)
 
         return car_state
 
     def reset_env(self):
-        print('resetting env')
+        print('resetting env...')
         rospy.wait_for_service('/gazebo/set_model_state')
         try:
             reset_pose = rospy.ServiceProxy('/gazebo/set_model_state', SetModelState)
@@ -157,7 +180,7 @@ class GazeboEnv(gym.Env):
         
         model_states = self.get_model_states()
         state = self.get_car_state(model_states)
-        print('done')
+        print('...done')
         return state
 
     def pause_physics(self):
