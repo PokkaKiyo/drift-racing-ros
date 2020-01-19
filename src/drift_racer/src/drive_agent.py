@@ -46,11 +46,11 @@ class DriveAgent:
 
                     self._interpreter.invoke()
                     output_data = self._interpreter.get_tensor(output_details[0]['index'])[0]
-                    time_taken_ms = (time.time() - start_time) * 1000
+                    # time_taken_ms = (time.time() - start_time) * 1000
                     # print(f'output_data:{output_data}, time_taken:{time_taken_ms}ms')
+                    # camera.annotate_text = str(output_data) + ", " + str(time_taken_ms)
                     stream.seek(0)
                     stream.truncate()
-                    # camera.annotate_text = str(output_data) + ", " + str(time_taken_ms)
 
                     data = []
                     data.append(output_data)
