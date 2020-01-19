@@ -69,8 +69,35 @@ class DQNAgent:
 
 
     def learn(self):
-        # TODO
-        pass
+        if len(self.memory) < self.train_start:
+            return
+        
+        minibatch = random.sample(self.memory, self.batch_size)
+
+        current_states = np.zeros((self.batch_size, self.n_features))
+        future_states = np.zeros((self.batch_size, self.n_features))
+        action_list, reward_list, done_list = [], [], []
+
+        for i in range(self.batch_size):
+            current_states[i] = minibatch[i][0]
+            action_list.append(minibatch[i][1])
+            reward_list.append(minibatch[i][2])
+            future_states[i] = minibatch[i][3]
+            done_list.append(minibatch[i][4])
+        
+        target = self.model.predict(current_states)
+        target_val = self.target_model.predict(future_states)
+
+        for i in range(self.batch_size):
+            if done_list[i]:
+                target[i][action_list[i]] = reward_list[i]
+            else:
+                target[i][action_list[i]] = reward_list[i] + self.discount_factor * (
+                    np.amax(target_val[i]))
+        
+        self.model.fit(current_states, target, batch_size=self.batch_size,
+                epochs=1, verbose=0)
+
 
     def update_target_model(self):
         self.target_model.set_weights(self.model.get_weights())

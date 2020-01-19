@@ -4,6 +4,7 @@ import rospy
 import tf
 from ackermann_msgs.msg import AckermannDrive
 from gazebo_msgs.msg import ModelStates, ModelState
+from geometry_msgs.msg import Vector3Stamped, TransformStamped
 from gazebo_msgs.srv import SetModelState
 from std_srvs.srv import Empty
 
@@ -13,6 +14,7 @@ import subprocess
 import time
 import os
 import math
+import time
 
 from my_utils import get_figure_eight_coordinates, calculateL2Dist
 
@@ -21,11 +23,13 @@ class GazeboEnv(gym.Env):
         rospy.init_node('gazebo_drift_car_gym')
 
         self._cmd_vel_pub = rospy.Publisher('/ackermann_cmd', AckermannDrive, queue_size=1)
-        self.unpause = rospy.ServiceProxy('/gazebo/unpause_physics', Empty)
+
+        self.reset_proxy = rospy.ServiceProxy('/gazebo/reset_world', Empty)
         self.pause = rospy.ServiceProxy('/gazebo/pause_physics', Empty)
+        self.unpause = rospy.ServiceProxy('/gazebo/unpause_physics', Empty)
 
         self.ackermann_cmd_msg = AckermannDrive()
-        self.ackermann_cmd_msg.speed = 1.0
+        self.ackermann_cmd_msg.speed = 2.5
 
         self.path_coordinates = get_figure_eight_coordinates()
         self.waypoint_idx = 1
@@ -64,29 +68,30 @@ class GazeboEnv(gym.Env):
         alpha = 0.5
         reward = (alpha * drift_metric_score) + ((1.0 - alpha) * path_tracking_score) - 1
 
-        print("drift_score: " + str(drift_metric_score) + ", tracking_score: " + str(path_tracking_score))
+        # print("drift_score: " + str(drift_metric_score) + ", tracking_score: " + str(path_tracking_score) + ", total: " + str(reward))
 
         return reward
     
     def get_isdone(self):
         return False
-    
-    # For now, using the one from https://github.com/kanakkabara/Autonomous-Drifting
+
     def get_drift_metric_score(self, state):
-		desiredForwardVel = 0.5		
-		desiredSideVel = 2  
-        desiredAngularVel = -3.5
-
-		carForwardVel = state[3]
-		carSideVel = state[4]
-        carAngularVel = state[5]
-
+        desired_forward_vel = 0.5
+        desired_side_vel = 2
+        desired_angular_vel = -3.5
         sigma = 5
-        deviationMagnitude = (carSideVel - desiredSideVel)**2 + \
-                        (carForwardVel - desiredForwardVel)**2 + \
-                        (carAngularVel - desiredAngularVel)**2
-        
-        return 1 - math.exp(-deviationMagnitude/(2 * sigma**2))
+
+        car_forward_vel = state[2]
+        car_side_vel = state[3]
+        car_angular_vel = state[4]
+
+        forward_vel_loss = (car_forward_vel - desired_forward_vel) ** 2
+        side_vel_loss = (car_side_vel - desired_side_vel) ** 2
+        angular_vel_loss = (car_angular_vel - desired_angular_vel) ** 2
+
+        total_loss = forward_vel_loss + side_vel_loss + angular_vel_loss
+
+        return 1 - math.exp(-total_loss / (2 * sigma**2))
 
     def get_path_tracking_score(self, state):
         current_x = state[0]
@@ -156,28 +161,23 @@ class GazeboEnv(gym.Env):
         car_state.append(vel_vector_baselink.vector.y)
         car_state.append(car_yaw)
 
-        return car_state
+        return np.array(car_state)
 
-    def reset_env(self):
-        print('resetting env...')
-        rospy.wait_for_service('/gazebo/set_model_state')
-        try:
-            reset_pose = rospy.ServiceProxy('/gazebo/set_model_state', SetModelState)
-            model_state = ModelState()
-            model_state.model_name = "ackermann_vehicle"
-            model_state.pose.position.x = 0
-            model_state.pose.position.y = 0
-            model_state.pose.position.z = 0
-            reset_pose(model_state)
-        except (rospy.ServiceException) as e:
-            print("/gazebo/set_model_state service call failed")
-
+    def reset(self):
         self.unpause_physics()
+        time.sleep(2)
+        rospy.wait_for_service('/gazebo/reset_world')
+        try:
+            self.reset_proxy()
+        except (rospy.ServiceException) as e:
+            print("/gazebo/reset_world service call failed")
+
+        # self.unpause_physics()
         model_states = self.get_model_states()
-        seld.pause_physics()
+        time.sleep(1)
+        self.pause_physics()
         
         state = self.get_state(model_states)
-        print('...done')
         return state
 
     def pause_physics(self):
@@ -192,7 +192,7 @@ class GazeboEnv(gym.Env):
         try:
             self.unpause()
         except (rospy.ServiceException) as e:
-            print("/gazebo/pause_physics service call failed")
+            print("/gazebo/unpause_physics service call failed")
 
     def _close(self):
         tmp = os.popen("ps -Af").read()

@@ -2,9 +2,10 @@
 
 from dqn_agent import DQNAgent
 from drift_gym import GazeboEnv
+import numpy as np
 
 # HYPER-PARAMETERS
-EPISODES = 1
+EPISODES = 2
 
 LEARNING_RATE = 0.001
 DISCOUNT_FACTOR = 0.99
@@ -36,16 +37,26 @@ if __name__ == '__main__':
 
     for episode in range(EPISODES):
         state = env.reset()
+        state = np.reshape(state, [1, 5])
         done = False
+        num_steps = 0
+        episode_reward = 0
         while not done:
             action = agent.choose_action(state)
             next_state, reward, done, _ = env.step(action)
+            next_state = np.reshape(next_state, [1, 5])
 
             agent.memorise(state, action, reward, next_state, done)
             agent.learn()
 
             state = next_state
+            episode_reward += reward
+
+            num_steps += 1
+            if num_steps >= 200:
+                done = True
 
             if done:
                 print("Done with episode", episode)
+                agent.update_target_model()
 
