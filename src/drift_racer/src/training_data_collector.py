@@ -35,7 +35,6 @@ class TrainingDataCollector:
             writer.writerow([image_path, self._steering_angle, self._speed])
 
 
-
 if __name__ == "__main__":
     rospy.init_node('training_data_collector')
     TrainingDataCollector()
