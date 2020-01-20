@@ -28,12 +28,11 @@ class TrainingDataCollector:
         self._speed = msg.linear.x
     
     def image_count_callback(self, msg):
-        image_path = "data/" + msg.data + ".jpeg"
+        image_path = msg.data + ".jpeg"
 
         with open('/home/pi/catkin_ws/data_log.csv', 'a+') as file:
             writer = csv.writer(file)
             writer.writerow([image_path, self._steering_angle, self._speed])
-
 
 
 if __name__ == "__main__":

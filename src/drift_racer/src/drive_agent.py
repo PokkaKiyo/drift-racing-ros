@@ -30,8 +30,8 @@ class DriveAgent:
         input_details = self._interpreter.get_input_details()
         output_details = self._interpreter.get_output_details()
         with picamera.PiCamera(resiolution=(640, 480), framerate=30) as camera:
-            camera.vflip = True
-            camera.start_preview()
+            # camera.vflip = True
+            # camera.start_preview()
             try:
                 stream = io.BytesIO()
                 for _ in camera.capture_continuous(stream, format='jpeg', use_video_port=True):
@@ -46,11 +46,11 @@ class DriveAgent:
 
                     self._interpreter.invoke()
                     output_data = self._interpreter.get_tensor(output_details[0]['index'])[0]
-                    time_taken_ms = (time.time() - start_time) * 1000
-                    print(f'output_data:{output_data}, time_taken:{time_taken_ms}ms')
+                    # time_taken_ms = (time.time() - start_time) * 1000
+                    # print(f'output_data:{output_data}, time_taken:{time_taken_ms}ms')
+                    # camera.annotate_text = str(output_data) + ", " + str(time_taken_ms)
                     stream.seek(0)
                     stream.truncate()
-                    camera.annotate_text = str(output_data) + ", " + str(time_taken_ms)
 
                     data = []
                     data.append(output_data)
@@ -60,7 +60,7 @@ class DriveAgent:
             except KeyboardInterrupt:
                 print("DriveAgent: Ctrl-C")
             finally:
-                camera.stop_preview()
+                # camera.stop_preview()
                 print("DriveAgent: done")
 
 if __name__ == "__main__":
