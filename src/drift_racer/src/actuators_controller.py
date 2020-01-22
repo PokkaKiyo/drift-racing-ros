@@ -29,11 +29,7 @@ class ActuatorsController:
             print("Actuators: Braking!")
         else:
             desired_speed = msg.linear.x
-            # duty_cycle = desired_speed / self._max_speed * 40
-            if desired_speed == 0:
-                duty_cycle = 0
-            else:
-                duty_cycle = 50
+            duty_cycle = desired_speed / self._max_speed * 50
 
         print("Actuators: duty_cycle:", duty_cycle)
         if duty_cycle >= 0:
@@ -41,7 +37,7 @@ class ActuatorsController:
 
         # Step 2: Control the steering
         desired_steering_angle = msg.angular.z
-        self._servo.angle = desired_steering_angle / self._max_steering * -85.0
+        self._servo.angle = desired_steering_angle / self._max_steering * -85.0 - 5.0
         print("Actuators: The desired steering angle is", desired_steering_angle)
    
 

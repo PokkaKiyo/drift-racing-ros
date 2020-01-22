@@ -24,18 +24,10 @@ class NavController:
             if data:
                 try:
                     msg = pickle.loads(data)
-                    if len(msg) == 1:
-                        print("1")
-                        desired_steering_angle = msg[0]
-                        desired_speed = 0.5
-                    elif len(msg) == 2:
-                        print("2")
-                        desired_steering_angle = msg[0]
-                        desired_speed = msg[1]
-                    else:
-                        print('NavController msg format error:', msg)
-                        desired_steering_angle = 0
-                        desired_speed = 0
+                    msg_ = msg[0]
+                    desired_steering_angle = msg_[0]
+                    desired_speed = msg_[1]
+                    print(desired_steering_angle)
 
                     nav_msg = Twist()
                     nav_msg.angular.z = desired_steering_angle
@@ -43,7 +35,8 @@ class NavController:
                     self._cmd_vel_nav_pub.publish(nav_msg)
 
                 except Exception as e:
-                    print('NavController: socket exception', e)
+                    # print('NavController: socket exception', e)
+                    pass
             else:
                 break
         

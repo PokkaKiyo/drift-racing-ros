@@ -29,7 +29,7 @@ class DriveAgent:
     def main(self):
         input_details = self._interpreter.get_input_details()
         output_details = self._interpreter.get_output_details()
-        with picamera.PiCamera(resiolution=(640, 480), framerate=30) as camera:
+        with picamera.PiCamera(resolution=(640, 480), framerate=30) as camera:
             # camera.vflip = True
             # camera.start_preview()
             try:
